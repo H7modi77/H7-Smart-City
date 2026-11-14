@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>H7 Smart City · المدينة الذكية</title>
+<meta name="description" content="مدينة ذكية تفاعلية: لوحة تحكم وجولة ثلاثية الأبعاد، وكل قطاع فيه نموذج ذكاء اصطناعي يشتغل داخل المتصفح.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div class="top">
+  <div class="logo">H7</div>
+  <div class="brand"><b>المدينة الذكية</b><span>H7 Smart City · كل قطاع يشتغل بالذكاء الاصطناعي</span></div>
+  <div class="clock" id="clock">--:--</div>
+</div>
+
+<div class="tabs">
+  <button class="tab on" data-v="viewDash">📊 لوحة التحكم</button>
+  <button class="tab" data-v="view3d">🏙️ جولة 3D</button>
+  <div class="speed">سرعة الوقت
+    <button data-s="1">×60</button><button data-s="4" class="on">×240</button><button data-s="15">×900</button>
+  </div>
+</div>
+
+<main>
+  <section class="view on" id="viewDash">
+    <div class="kpis" id="kpis"></div>
+    <div class="grid2">
+      <div class="card"><h3>خريطة المدينة <span class="hint">اضغط على أي قطاع</span></h3><div id="map"></div></div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card"><h3>🔔 تنبيهات الذكاء الاصطناعي</h3><ul class="feed" id="feed"></ul></div>
+        <div class="card"><h3>حركة المرور 24 ساعة</h3><div class="chartbox" style="height:170px"><canvas id="chT"></canvas></div></div>
+        <div class="card"><h3>الكهرباء 24 ساعة <span class="hint">MW</span></h3><div class="chartbox" style="height:170px"><canvas id="chE"></canvas></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view3d">
+    <canvas id="scene"></canvas>
+    <div class="hud"><b>جولة في المدينة</b>اسحب للتدوير، وقرّب بإصبعين أو بعجلة الماوس. اضغط على أي مبنى ملوّن تجرّب الذكاء الاصطناعي حقه.</div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <footer>صممه وبرمجه <b>Mohammed Almarhoon</b> · <a href="https://github.com/H7modi77/H7-Smart-City">github.com/H7modi77/H7-Smart-City</a><br>كل النماذج تشتغل داخل متصفحك، والبيانات اصطناعية لأغراض العرض</footer>
+</main>
+
+<div class="drawer" id="drawer">
+  <div class="scrim"></div>
+  <div class="sheet">
+    <header><span class="ic"></span><div><h2></h2><p></p></div><button class="x" aria-label="إغلاق">✕</button></header>
+    <div class="body"></div>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+<script type="module">
+  // legend buttons in the 3D view fly the camera to a building and open it
+  const items = [['traffic','🚦 المرور'],['hospital','🏥 المستشفى'],['school','🏫 المدرسة'],['grocery','🛒 البقالة'],['energy','⚡ الطاقة'],['air','🌫️ الهواء'],['waste','🗑️ النظافة']];
+  document.getElementById('legend').innerHTML = items.map(([id, t]) => `<button data-m="${id}" style="--c:var(--${id})"><i></i>${t}</button>`).join('');
+</script>
+</body>
+</html>
