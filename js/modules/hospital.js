@@ -75,7 +75,7 @@ export default {
     let rec = 6;
     const draw = () => {
       const f = erForecast(sim), peak = Math.max(...f);
-      rec = Math.max(4, Math.ceil(peak / 0.9 * 0.85 + sim.erQueue / 6));
+      rec = Math.max(4, Math.ceil(peak / 1.2 * 1.1 + sim.erQueue / 4));
       el.querySelector('#fc').innerHTML = f.map((v, i) => `<div class="stat"><div class="t">+${i + 1} ساعة</div><div class="v">${fmt(v, 1)}</div></div>`).join('') +
         `<div class="stat" style="border-color:#7a2a2a"><div class="t">الطاقم المقترح</div><div class="v">${rec}</div></div>`;
       el.querySelector('#cur').textContent = `الطاقم الحالي: ${sim.erStaff} · بالانتظار الآن: ${sim.erQueue}`;

@@ -15,7 +15,7 @@ function label(text, color = '#ffffff') {
   g.fillStyle = '#fff'; g.font = '600 52px "IBM Plex Sans Arabic", sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
   g.direction = 'rtl'; g.fillText(text, 256, 66);
   const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthTest: false }));
-  s.scale.set(20, 5, 1); s.renderOrder = 10;
+  s.scale.set(30, 7.5, 1); s.renderOrder = 10;
   return s;
 }
 
@@ -32,7 +32,7 @@ export function createCity(canvas, sim, onPick) {
   renderer.xr.enabled = true;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(50, 1, 0.5, 2000);
-  camera.position.set(150, 140, 170);
+  camera.position.set(120, 150, 190);
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true; controls.maxPolarAngle = Math.PI * 0.47; controls.minDistance = 30; controls.maxDistance = 420;
 
@@ -61,7 +61,7 @@ export function createCity(canvas, sim, onPick) {
     if (LANDMARK_BLOCKS[`${i},${j}`]) continue;
     const c = blockCenter(i, j), central = 1 - c.length() / (HALF * 1.4);
     for (let a = 0; a < 2; a++) for (let b = 0; b < 2; b++) {
-      const w = 9 + r() * 5, d = 9 + r() * 5, hgt = 8 + r() * 25 + central * 55 * r();
+      const w = 9 + r() * 5, d = 9 + r() * 5, hgt = 6 + r() * 14 + Math.max(0, central) * 22 * r();
       tmp.push({ x: c.x - 8 + a * 16, z: c.z - 8 + b * 16, w, d, h: hgt, col: new THREE.Color().setHSL(0.58 + r() * 0.08, 0.12, 0.62 + r() * 0.2) });
     }
   }
@@ -74,7 +74,7 @@ export function createCity(canvas, sim, onPick) {
   const addLandmark = (id, group, pos, text, color) => {
     group.position.copy(pos); scene.add(group);
     group.traverse((o) => { if (o.isMesh) { o.userData.module = id; pickables.push(o); } });
-    const l = label(text, color); l.position.set(pos.x, 48, pos.z); scene.add(l);
+    const l = label(text, color); l.position.set(pos.x, 52, pos.z); scene.add(l);
     l.userData.module = id; pickables.push(l);
     anchors[id] = pos.clone();
   };
@@ -212,7 +212,11 @@ export function createCity(canvas, sim, onPick) {
     renderer.render(scene, camera);
   });
 
-  const vr = VRButton.createButton(renderer);
-  vr.style.position = 'absolute';
-  return { flyTo, vrButton: vr, pause: (p) => { running = !p; } };
+  // WebXR: only show the VR button on devices that can actually enter VR
+  const vrButton = document.createElement('span');
+  if (navigator.xr) navigator.xr.isSessionSupported('immersive-vr').then((ok) => {
+    if (!ok) return;
+    const b = VRButton.createButton(renderer); b.style.left = '12px'; b.style.bottom = '64px'; vrButton.appendChild(b);
+  }).catch(() => {});
+  return { flyTo, vrButton, pause: (p) => { running = !p; } };
 }

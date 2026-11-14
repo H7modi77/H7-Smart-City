@@ -52,7 +52,7 @@ export class CitySim {
       t: [], traffic: INTERSECTIONS.map(() => []), er: [], erQueue: [], load: [], solar: [],
       aqi: STATIONS.map(() => []), sales: [],
     };
-    this.erQueue = 6; this.erStaff = 6;
+    this.erQueue = 4; this.erStaff = 8;
     this.battery = { capMWh: 120, soc: 0.5, powerMW: 40 };
     this.salesToday = 0;
     this.salesHistory = this._makeSalesHistory(140);
@@ -65,6 +65,8 @@ export class CitySim {
     for (let i = 0; i < DAY; i++) this._step(true);
     this.minute = start;
     this.salesToday = 0;                // prefill must not count as today's sales
+    this.bins = this._makeBins(22);     // start the day with freshly emptied-ish bins
+    this.erQueue = 4;
     this.events = [];
     this._acc = 0;
   }
@@ -109,7 +111,7 @@ export class CitySim {
     INTERSECTIONS.forEach((it, i) => push(hist.traffic[i], Math.max(30, trafficProfile(h) * it.f * (1 + 0.08 * gauss()))));
 
     const arrivals = poisson(erProfile(h) * STEP_MIN / 60);
-    const served = Math.min(this.erQueue + arrivals, poisson(this.erStaff * 0.9 * STEP_MIN / 60));
+    const served = Math.min(this.erQueue + arrivals, poisson(this.erStaff * 1.2 * STEP_MIN / 60));
     this.erQueue = Math.max(0, this.erQueue + arrivals - served);
     push(hist.er, arrivals * 60 / STEP_MIN); push(hist.erQueue, this.erQueue);
 
