@@ -113,7 +113,8 @@ export class CitySim {
     const arrivals = poisson(erProfile(h) * STEP_MIN / 60);
     const served = Math.min(this.erQueue + arrivals, poisson(this.erStaff * 1.2 * STEP_MIN / 60));
     this.erQueue = Math.max(0, this.erQueue + arrivals - served);
-    push(hist.er, arrivals * 60 / STEP_MIN); push(hist.erQueue, this.erQueue);
+    this._arr = [...(this._arr || []), arrivals].slice(-6);          // smooth to a 1-hour rate
+    push(hist.er, this._arr.reduce((a, b) => a + b, 0) * 60 / (STEP_MIN * this._arr.length)); push(hist.erQueue, this.erQueue);
 
     const load = loadProfile(h) * (1 + 0.03 * gauss()), solar = solarProfile(h, this.cloud) * (1 + 0.04 * gauss());
     push(hist.load, load); push(hist.solar, Math.max(0, solar));
