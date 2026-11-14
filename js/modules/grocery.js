@@ -54,7 +54,7 @@ export function rules(tx) {
   return (a) => Object.entries(pair).filter(([k]) => k.startsWith(a + '|')).map(([k, c]) => {
     const b = k.split('|')[1];
     return { b, support: c / n, conf: c / single[a], lift: (c / single[a]) / (single[b] / n) };
-  }).filter((r) => r.support > 0.01).sort((x, y) => y.lift - x.lift).slice(0, 4);
+  }).filter((r) => r.support > 0.01 && r.lift > 1.05).sort((x, y) => y.lift - x.lift).slice(0, 4);
 }
 
 const DOW = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
@@ -75,7 +75,8 @@ export default {
     chips.innerHTML = ITEMS.map((it) => `<span class="chip" data-i="${it}">${it}</span>`).join('');
     const pick = (it) => {
       chips.querySelectorAll('.chip').forEach((c) => c.classList.toggle('on', c.dataset.i === it));
-      el.querySelector('#rec').innerHTML = rec(it).map((r) => `<tr><td><b>${r.b}</b></td><td>${fmt(100 * r.conf)}٪</td><td>${fmt(r.lift, 2)}×</td></tr>`).join('');
+      const rs = rec(it);
+      el.querySelector('#rec').innerHTML = rs.length ? rs.map((r) => `<tr><td><b>${r.b}</b></td><td>${fmt(100 * r.conf)}٪</td><td>${fmt(r.lift, 2)}×</td></tr>`).join('') : '<tr><td colspan=3 style="color:var(--muted)">ما فيه منتج يرتبط فيه بقوة كافية</td></tr>';
     };
     chips.onclick = (e) => { const c = e.target.closest('.chip'); if (c) pick(c.dataset.i); };
     pick('قهوة');
@@ -91,7 +92,7 @@ export default {
         { label: 'نطاق ±RMSE', data: [...hist.map(() => null), ...fc.map((v) => v + rmse)], borderColor: 'rgba(245,208,76,.25)', borderWidth: 1 },
         { label: ' ', data: [...hist.map(() => null), ...fc.map((v) => v - rmse)], borderColor: 'rgba(245,208,76,.25)', borderWidth: 1 },
       ];
-      if (!chart) chart = lineChart(el.querySelector('#ch'), labels, ds, { y: { beginAtZero: false } });
+      if (!chart) chart = lineChart(el.querySelector('#ch'), labels, ds, { y: { beginAtZero: false }, extra: { plugins: { legend: { labels: { filter: (it) => it.text.trim() } } } } });
       else { chart.data.labels = labels; ds.forEach((d, i) => { chart.data.datasets[i].data = d.data; }); chart.update(); }
       const next7 = fc.slice(0, 7).reduce((a, b) => a + b, 0);
       const peak = fc.slice(0, 7).indexOf(Math.max(...fc.slice(0, 7)));
