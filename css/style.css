@@ -84,3 +84,19 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:18px}
 .loading{display:grid;place-items:center;height:100%;color:var(--muted)}
 
 .kpi .v,.stat .v{direction:ltr;text-align:right;unicode-bidi:plaintext}
+.kpis{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+@media(max-width:640px){
+  .brand span{display:none}
+  .tabs{padding:8px 10px 0;flex-wrap:wrap}
+  .tab{padding:7px 10px;font-size:13px}
+  .speed{font-size:0;gap:3px}
+  .speed button{font-size:11px;padding:3px 6px}
+  main{padding:0 10px 30px}
+  .view{padding:10px}
+  .kpi{padding:10px}.kpi .v{font-size:19px}
+  .slider{grid-template-columns:100px 1fr 44px}
+  #scene{height:68vh}
+  .hud{max-width:70%;font-size:12px}
+  .legend button{font-size:11px;padding:4px 8px}
+  .sheet{padding:12px 12px 40px}
+}
